@@ -82,13 +82,19 @@ void linkCodes(string objCode1Name, string objCode2Name) {
       corFactor++;
     }
     cout << "corFactor:" << corFactor << "\n";
+    cout << "Tabela uso1:\n";
     for (auto const& pair : useTable1) {
       cout << "{" << pair.first << ": " << pair.second << "}\n";
     }
-
+    cout << "Tabela def1:\n";
     for (auto const& pair : defTable1) {
       cout << "{" << pair.first << ": " << pair.second << "}\n";
     }
+    for (auto i : code1Int) {
+      std::cout << i << ' ';
+    }
+    cout << "\n";
+
     objCode1.close();
 
   } else {
@@ -148,13 +154,18 @@ void linkCodes(string objCode1Name, string objCode2Name) {
     while (code2Char >> number) {
       code2Int.push_back(number);
     }
+    cout << "Tabela uso2:\n";
     for (auto const& pair : useTable2) {
       cout << "{" << pair.first << ": " << pair.second << "}\n";
     }
-
+    cout << "Tabela def2:\n";
     for (auto const& pair : defTable2) {
       cout << "{" << pair.first << ": " << pair.second << "}\n";
     }
+    for (auto i : code2Int) {
+      cout << i << ' ';
+    }
+    cout << "\n";
     objCode2.close();
 
   } else {
