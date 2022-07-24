@@ -169,6 +169,46 @@ void linkCodes(string objCode1Name, string objCode2Name) {
     objCode2.close();
 
   } else {
-    cout << "Unable to open file";
+    cout << "Unable to open file\n";
   }
+  // cout << "teste at:" << useTable1.at(1) << "\n";
+  //  cout << "teste at:" << defTable2[""] << "\n";
+  // unordered_map<int, string>::const_iterator got = defTable2.find("Y");
+  // cout << "teste find:" << got->second << "\n";
+  int j = 0;
+  vector<int> linkedCode;
+
+  for (auto i : code1Int) {
+    if (useTable1[j] != "") {
+      for (auto const& pair : defTable2) {
+        if (useTable1[j] == pair.second) {
+          i = i + pair.first + corFactor;
+          break;
+        }
+      }
+      // cout << "achei:" << j << " i=" << i << "\n";
+    }
+    linkedCode.push_back(i);
+    j++;
+  }
+  int aux = 0;
+  j = 0;
+  for (auto i : code2Int) {
+    if (useTable2[j] != "") {
+      for (auto const& pair : defTable1) {
+        if (useTable2[j] == pair.second) {
+          i = i + pair.first;
+          break;
+        }
+      }
+      // cout << "achei:" << j << " i=" << i << "\n";
+    }
+
+    linkedCode.push_back(i);
+    j++;
+  }
+  for (auto i : linkedCode) {
+    cout << i << ' ';
+  }
+  cout << "\n";
 }
