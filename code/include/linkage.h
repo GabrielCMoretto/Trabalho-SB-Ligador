@@ -1,6 +1,7 @@
 #include <string.h>
 
 #include <iostream>
+#include <vector>
 using namespace std;
 
-void linkCodes(string, string);
+vector<int> linkCodes(string, string);
