@@ -3,7 +3,7 @@
 
 #define ADD_OP 1
 #define SUB_OP 2
-#define MULT_OP 3
+#define MUL_OP 3
 #define DIV_OP 4
 #define JMP_OP 5
 #define JMPN_OP 6
@@ -17,3 +17,9 @@
 #define STOP_OP 14
 
 #endif  // GLOBALVARS
+
+#include <vector>
+using namespace std;
+
+int checkInstruction(int);
+bool vectIntcontains(vector<int>, int);

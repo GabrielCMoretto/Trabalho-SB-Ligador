@@ -1,14 +1,17 @@
 #include "linkage.h"
 
+#include <algorithm>
 #include <fstream>
 #include <iostream>
 #include <sstream>
 #include <string>
 #include <unordered_map>
 #include <vector>
+
+#include "globalOps.h"
 using namespace std;
 
-void linkCodes(string objCode1Name, string objCode2Name) {
+vector<int> linkCodes(string objCode1Name, string objCode2Name) {
   string line;
   string auxString;
   string auxStringNumber;
@@ -28,7 +31,6 @@ void linkCodes(string objCode1Name, string objCode2Name) {
   ifstream objCode2(objCode2Name);
   if (objCode1.is_open()) {
     while (getline(objCode1, line)) {
-      // cout << line << '\n';
       if (line == "TABELA USO") {
         useTableCount++;
       }
@@ -81,19 +83,19 @@ void linkCodes(string objCode1Name, string objCode2Name) {
       code1Int.push_back(number);
       corFactor++;
     }
-    cout << "corFactor:" << corFactor << "\n";
-    cout << "Tabela uso1:\n";
-    for (auto const& pair : useTable1) {
-      cout << "{" << pair.first << ": " << pair.second << "}\n";
-    }
-    cout << "Tabela def1:\n";
-    for (auto const& pair : defTable1) {
-      cout << "{" << pair.first << ": " << pair.second << "}\n";
-    }
-    for (auto i : code1Int) {
-      std::cout << i << ' ';
-    }
-    cout << "\n";
+    // cout << "corFactor:" << corFactor << "\n";
+    // cout << "Tabela uso1:\n";
+    // for (auto const& pair : useTable1) {
+    //   cout << "{" << pair.first << ": " << pair.second << "}\n";
+    // }
+    // cout << "Tabela def1:\n";
+    // for (auto const& pair : defTable1) {
+    //   cout << "{" << pair.first << ": " << pair.second << "}\n";
+    // }
+    // for (auto i : code1Int) {
+    //   std::cout << i << ' ';
+    // }
+    // cout << "\n";
 
     objCode1.close();
 
@@ -154,27 +156,23 @@ void linkCodes(string objCode1Name, string objCode2Name) {
     while (code2Char >> number) {
       code2Int.push_back(number);
     }
-    cout << "Tabela uso2:\n";
-    for (auto const& pair : useTable2) {
-      cout << "{" << pair.first << ": " << pair.second << "}\n";
-    }
-    cout << "Tabela def2:\n";
-    for (auto const& pair : defTable2) {
-      cout << "{" << pair.first << ": " << pair.second << "}\n";
-    }
-    for (auto i : code2Int) {
-      cout << i << ' ';
-    }
+    // cout << "Tabela uso2:\n";
+    // for (auto const& pair : useTable2) {
+    //   cout << "{" << pair.first << ": " << pair.second << "}\n";
+    // }
+    // cout << "Tabela def2:\n";
+    // for (auto const& pair : defTable2) {
+    //   cout << "{" << pair.first << ": " << pair.second << "}\n";
+    // }
+    // for (auto i : code2Int) {
+    //   cout << i << ' ';
+    // }
     cout << "\n";
     objCode2.close();
 
   } else {
     cout << "Unable to open file\n";
   }
-  // cout << "teste at:" << useTable1.at(1) << "\n";
-  //  cout << "teste at:" << defTable2[""] << "\n";
-  // unordered_map<int, string>::const_iterator got = defTable2.find("Y");
-  // cout << "teste find:" << got->second << "\n";
   int j = 0;
   vector<int> linkedCode;
 
@@ -186,29 +184,50 @@ void linkCodes(string objCode1Name, string objCode2Name) {
           break;
         }
       }
-      // cout << "achei:" << j << " i=" << i << "\n";
     }
     linkedCode.push_back(i);
     j++;
   }
-  int aux = 0;
+  int adressesToRead = 0;
   j = 0;
+  vector<int> relAdresses;
   for (auto i : code2Int) {
     if (useTable2[j] != "") {
       for (auto const& pair : defTable1) {
         if (useTable2[j] == pair.second) {
           i = i + pair.first;
+          if (adressesToRead == 1 || adressesToRead == 2) {
+            adressesToRead--;
+          }
+
           break;
         }
       }
-      // cout << "achei:" << j << " i=" << i << "\n";
+
+    } else if (vectIntcontains(relAdresses, j)) {
+      adressesToRead = -1;
+    } else if (adressesToRead == 0 &&
+               vectIntcontains(relAdresses, j) == false) {
+      adressesToRead = checkInstruction(i);
+    } else if (adressesToRead >= 0 &&
+               vectIntcontains(relAdresses, j) == false) {
+      relAdresses.push_back(j);
+      adressesToRead--;
+      i = i + corFactor;
+    } else if (adressesToRead != 0 && vectIntcontains(relAdresses, j)) {
+      adressesToRead = 0;
     }
 
     linkedCode.push_back(i);
     j++;
   }
-  for (auto i : linkedCode) {
-    cout << i << ' ';
-  }
-  cout << "\n";
+  // for (auto i : linkedCode) {
+  //   cout << i << ' ';
+  // }
+  // cout << "\n";
+  // for (auto i : relAdresses) {
+  //   cout << i << ' ';
+  // }
+  // cout << "\n";
+  return linkedCode;
 }
